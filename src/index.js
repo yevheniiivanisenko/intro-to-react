@@ -12,13 +12,11 @@ function Square(props) {
 
 class Board extends React.Component {
   renderSquare(i) {
-    let highlight = false;
-    if (this.props.result) {
-      highlight =
+    const highlight = this.props.result && (
         this.props.result.squares[0] === i ||
         this.props.result.squares[1] === i ||
-        this.props.result.squares[2] === i;
-    }
+        this.props.result.squares[2] === i
+    );
     return (
       <Square
         highlight={highlight}
