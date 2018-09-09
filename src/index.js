@@ -46,12 +46,19 @@ class Game extends React.Component {
       history: [
         {
           squares: Array(9).fill(null),
-          move: 0,
+          step: 0,
         }
       ],
       stepNumber: 0,
       xIsNext: true
     };
+  }
+
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0
+    });
   }
 
   handleClick(i) {
@@ -66,7 +73,7 @@ class Game extends React.Component {
       history: history.concat([
         {
           squares: squares,
-          move: history.length,
+          step: history.length,
           location: locations[i],
         }
       ]),
@@ -75,11 +82,8 @@ class Game extends React.Component {
     });
   }
 
-  jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0
-    });
+  sortMoves() {
+    this.setState((prevState) => ({history: prevState.history.reverse()}));
   }
 
   render() {
@@ -87,15 +91,15 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map(({move, location}) => {
-      const desc = move ?
-        'Go to move #' + move + location :
+    const moves = history.map(({step, location}, move) => {
+      const desc = step ?
+        'Go to move #' + step + location :
         'Go to game start';
-      const currentClass = move === this.state.stepNumber ? 'current' : '';
+      const current = step === this.state.stepNumber ? 'current' : '';
       return (
         <li key={move}>
           <button
-            className={currentClass}
+            className={current}
             onClick={() => this.jumpTo(move)}
           >
             {desc}
@@ -121,6 +125,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button className="sort-button" onClick={() => this.sortMoves()}>sort</button>
           <ol>{moves}</ol>
         </div>
       </div>
